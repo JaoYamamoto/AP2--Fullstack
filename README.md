@@ -45,3 +45,29 @@ Containerização com Docker;
 ### APIs Externas
 - **Jikan API (MyAnimeList):** Utilizada para fornecer dados de animes na DB do site MyAnimeList
 
+
+### Instalação
+
+**1. Clone o repositório:**
+``` cmd
+git clone https://github.com/JaoYamamoto/AP2--Fullstack
+```
+
+**2. Instale as dependências:**
+```cmd
+pnpm install
+# ou
+npm install
+```
+
+**3. Inicie o servidor de desenvolvimento:**
+```cmd
+pnpm run dev
+# ou
+npm run dev
+```
+
+**4. Acesse a aplicação:**
+'''cmd
+ctrl + lmb no link disponível no cmd
+'''
