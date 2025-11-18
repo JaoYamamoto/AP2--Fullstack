@@ -10,16 +10,16 @@ Qualquer um que deseje ter uma ferramenta simples para manter uma lista de anime
 ## O que se pretende fazer
 
 ### Funcionalidades Atuais:
-Buscar Animes: Integração com Jikan API para buscar animes por nome
-Visualizar Detalhes: Exibição de informações completas do anime
-Adicionar ao Diário: Registro de animes com nota pessoal de 1 a 10
-Gerenciar Diário: Visualizar, editar e remover animes
+Buscar Animes: Integração com Jikan API para buscar animes por nome;
+Visualizar Detalhes: Exibição de informações completas do anime;
+Adicionar ao Diário: Registro de animes com nota pessoal de 1 a 10;
+Gerenciar Diário: Visualizar, editar e remover animes;
 
 ### Funcionalidades Futuras (integração com o Backend):
-API REST em Flask com estrutura MVC
-Banco de dados SQLite
-Documentação Swagger/OpenAPI
-Containerização com Docke
+API REST em Flask com estrutura MVC;
+Banco de dados SQLite;
+Documentação Swagger;
+Containerização com Docker;
 
 ## Stack e Tecnologias Utilizadas
 
