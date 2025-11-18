@@ -8,19 +8,21 @@ Uma ferramenta de tracking pessoal de animes assistidos, com uma função de dar
 Qualquer um que deseje ter uma ferramenta simples para manter uma lista de animes vistos, sem a necessidade de estar participando de alguma rede social, ter mais uma conta em mais um site diferente ou de ficar recebendo emails de publicidade do site.
 
 ## O que se pretende fazer
-Funcionalidades Atuais 
-    Buscar Animes: Integração com Jikan API para buscar animes por nome
-    Visualizar Detalhes: Exibição de informações completas do anime
-    Adicionar ao Diário: Registro de animes com nota pessoal de 1 a 10
-    Gerenciar Diário: Visualizar, editar e remover animes
-    Persistência Local: localStorage para manter dados entre sessões
-    Interface Responsiva: Design mobile-first com paleta escura
+Funcionalidades Atuais:
 
-Funcionalidades Futuras (integração com o Backend)
-    API REST em Flask com estrutura MVC
-    Banco de dados SQLite
-    Documentação Swagger/OpenAPI
-    Containerização com Docke
+Buscar Animes: Integração com Jikan API para buscar animes por nome
+Visualizar Detalhes: Exibição de informações completas do anime
+Adicionar ao Diário: Registro de animes com nota pessoal de 1 a 10
+Gerenciar Diário: Visualizar, editar e remover animes
+Persistência Local: localStorage para manter dados entre sessões
+Interface Responsiva: Design mobile-first com paleta escura
+
+Funcionalidades Futuras (integração com o Backend):
+
+API REST em Flask com estrutura MVC
+Banco de dados SQLite
+Documentação Swagger/OpenAPI
+Containerização com Docke
 
 ## Stack e Tecnologias Utilizadas
 
