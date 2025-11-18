@@ -56,18 +56,18 @@ git clone https://github.com/JaoYamamoto/AP2--Fullstack
 **2. Instale as dependências:**
 ```cmd
 pnpm install
-# ou
+ ou
 npm install
 ```
 
 **3. Inicie o servidor de desenvolvimento:**
 ```cmd
 pnpm run dev
-# ou
+ ou
 npm run dev
 ```
 
 **4. Acesse a aplicação:**
-'''cmd
+```cmd
 ctrl + lmb no link disponível no cmd
-'''
+```
