@@ -1,3 +1,4 @@
+//Centralizando chamadas da API
 const API_BASE = "https://api.jikan.moe/v4";
 
 export async function searchAnimes(query) {

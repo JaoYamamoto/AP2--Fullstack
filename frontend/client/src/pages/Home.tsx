@@ -12,6 +12,7 @@ interface Anime {
   episodes: number;
 }
 
+//Busca
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState<Anime[]>([]);
@@ -25,6 +26,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
 
+    //Chamando API
     try {
       const data = await searchAnimes(searchQuery);
       setResults(data);
