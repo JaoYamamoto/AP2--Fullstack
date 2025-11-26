@@ -1,28 +1,18 @@
 import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
 import Header from "@/components/Header";
-import { ArrowLeft, Star } from "lucide-react";
-import { getAnimeDetail } from "@/api";
+import { ArrowLeft, Star, AlertCircle } from "lucide-react";
+import { getAnimeDetail, addToDiary, getOrCreateDefaultUser } from "@/api";
 
 interface Anime {
   mal_id: number;
   title: string;
-  images: { jpg: { image_url: string } };
-  score: number;
-  episodes: number;
-  status: string;
-  synopsis: string;
-  aired: { from: string };
-}
-
-interface DiaryEntry {
-  id: string;
-  mal_id: number;
-  title: string;
-  imageUrl: string;
-  score: number;
-  userScore: number;
-  episodes: number;
+  image_url?: string;
+  score?: number;
+  episodes?: number;
+  status?: string;
+  synopsis?: string;
+  aired?: { from?: string };
 }
 
 export default function AnimeDetail() {
@@ -31,25 +21,38 @@ export default function AnimeDetail() {
   const [anime, setAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);
   const [userScore, setUserScore] = useState(0);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const id = params?.id ? parseInt(params.id) : 0;
 
+  // Inicializar usuário
+  useEffect(() => {
+    const initUser = async () => {
+      try {
+        const uid = await getOrCreateDefaultUser();
+        setUserId(uid);
+      } catch (err) {
+        console.error("Erro ao inicializar usuário:", err);
+        setError("Erro ao inicializar usuário");
+      }
+    };
+
+    initUser();
+  }, []);
+
+  // Carregar anime
   useEffect(() => {
     const fetchAnime = async () => {
       try {
+        setLoading(true);
         const data = await getAnimeDetail(id);
         setAnime(data);
-
-        const saved = localStorage.getItem("anime-diary");
-        if (saved) {
-          const entries = JSON.parse(saved) as DiaryEntry[];
-          const entry = entries.find((e) => e.mal_id === id);
-          if (entry) {
-            setUserScore(entry.userScore);
-          }
-        }
-      } catch (error) {
-        console.error("Erro ao carregar anime:", error);
+      } catch (err) {
+        console.error("Erro ao carregar anime:", err);
+        setError("Erro ao carregar detalhes do anime");
       } finally {
         setLoading(false);
       }
@@ -60,31 +63,33 @@ export default function AnimeDetail() {
     }
   }, [id]);
 
-  const handleAddToDiary = () => {
-    if (!anime || userScore === 0) return;
-
-    const saved = localStorage.getItem("anime-diary");
-    const entries = saved ? JSON.parse(saved) : [];
-
-    const existingIndex = entries.findIndex((e: DiaryEntry) => e.mal_id === id);
-    const newEntry: DiaryEntry = {
-      id: `${id}-${Date.now()}`,
-      mal_id: id,
-      title: anime.title,
-      imageUrl: anime.images.jpg.image_url,
-      score: anime.score,
-      userScore,
-      episodes: anime.episodes,
-    };
-
-    if (existingIndex >= 0) {
-      entries[existingIndex] = { ...entries[existingIndex], userScore };
-    } else {
-      entries.push(newEntry);
+  const handleAddToDiary = async () => {
+    if (!anime || userScore === 0 || !userId) {
+      setError("Selecione uma nota antes de adicionar");
+      return;
     }
 
-    localStorage.setItem("anime-diary", JSON.stringify(entries));
-    setLocation("/diary");
+    try {
+      setSubmitting(true);
+      setError(null);
+      setSuccess(null);
+
+      await addToDiary(userId, id, userScore, "watching", 0, "");
+
+      setSuccess("Anime adicionado ao diário com sucesso!");
+
+      // Redirecionar após 1.5 segundos
+      setTimeout(() => {
+        setLocation("/diary");
+      }, 1500);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao adicionar ao diário";
+      setError(errorMessage);
+      console.error("Erro ao adicionar ao diário:", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -124,7 +129,7 @@ export default function AnimeDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-1">
             <img
-              src={anime.images.jpg.image_url}
+              src={anime.image_url || '/placeholder.svg'}
               alt={anime.title}
               className="w-full rounded-lg shadow-lg hover:shadow-xl transition-shadow"
             />
@@ -152,7 +157,7 @@ export default function AnimeDetail() {
               <div>
                 <p className="text-gray-400 text-sm">Lançamento</p>
                 <p className="text-lg font-semibold">
-                  {anime.aired.from
+                  {anime.aired?.from
                     ? new Date(anime.aired.from).getFullYear()
                     : "?"}
                 </p>
@@ -166,6 +171,19 @@ export default function AnimeDetail() {
               </p>
             </div>
 
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-red-400">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <p className="text-green-400">{success}</p>
+              </div>
+            )}
+
             <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Sua Nota</h2>
               <div className="flex items-center gap-4 mb-6 flex-wrap">
@@ -174,7 +192,8 @@ export default function AnimeDetail() {
                     <button
                       key={score}
                       onClick={() => setUserScore(score)}
-                      className={`w-10 h-10 rounded-lg font-semibold transition-all duration-200 ${
+                      disabled={submitting}
+                      className={`w-10 h-10 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 ${
                         userScore === score
                           ? "bg-blue-600 text-white shadow-lg shadow-blue-600/50"
                           : "bg-slate-800 text-gray-400 hover:bg-slate-700"
@@ -187,12 +206,14 @@ export default function AnimeDetail() {
               </div>
               <button
                 onClick={handleAddToDiary}
-                disabled={userScore === 0}
+                disabled={userScore === 0 || submitting || !userId}
                 className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
               >
-                {userScore === 0
-                  ? "Selecione uma nota"
-                  : "Adicionar ao Diário"}
+                {submitting
+                  ? "Adicionando..."
+                  : userScore === 0
+                    ? "Selecione uma nota"
+                    : "Adicionar ao Diário"}
               </button>
             </div>
           </div>

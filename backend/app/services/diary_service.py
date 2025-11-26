@@ -42,14 +42,20 @@ class DiaryService:
             raise ValueError(f'Invalid status. Must be one of: {", ".join(DiaryEntry.VALID_STATUSES)}')
         
         # Verificar se anime existe
-        anime = Anime.query.get(data['anime_id'])
+        # Tentar buscar por mal_id primeiro (MyAnimeList ID)
+        anime = Anime.query.filter_by(mal_id=data['anime_id']).first()
+        
+        # Se nao encontrar, tentar por id do banco
+        if not anime:
+            anime = Anime.query.get(data['anime_id'])
+        
         if not anime:
             raise ValueError('Anime not found')
         
         # Verificar se já existe no diário
         existing = DiaryEntry.query.filter_by(
             user_id=user_id,
-            anime_id=data['anime_id']
+            anime_id=anime.id
         ).first()
         
         if existing:
@@ -58,7 +64,7 @@ class DiaryService:
         try:
             entry = DiaryEntry(
                 user_id=user_id,
-                anime_id=data['anime_id'],
+                anime_id=anime.id,
                 user_score=user_score,
                 status=status,
                 episodes_watched=data.get('episodes_watched', 0),

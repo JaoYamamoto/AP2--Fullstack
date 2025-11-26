@@ -63,8 +63,12 @@ class AnimeService:
             raise ValueError(f'Error saving anime: {str(e)}')
     
     def get_anime(self, anime_id):
-        """Obter anime por ID"""
+        """Obter anime por ID do banco"""
         return Anime.query.get(anime_id)
+    
+    def get_anime_by_mal_id(self, mal_id):
+        """Obter anime por mal_id (MyAnimeList ID)"""
+        return Anime.query.filter_by(mal_id=mal_id).first()
     
     def create_anime(self, data):
         """Criar novo anime manualmente"""

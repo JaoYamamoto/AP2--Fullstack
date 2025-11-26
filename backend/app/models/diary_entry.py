@@ -1,8 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import UniqueConstraint, CheckConstraint
-
-db = SQLAlchemy()
+from app.models import db
 
 
 class DiaryEntry(db.Model):

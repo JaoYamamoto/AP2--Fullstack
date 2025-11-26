@@ -90,7 +90,12 @@ def get_anime(anime_id):
       404:
         description: Anime não encontrado
     """
-    anime = anime_service.get_anime(anime_id)
+    # Tentar buscar por mal_id primeiro (MyAnimeList ID)
+    anime = anime_service.get_anime_by_mal_id(anime_id)
+    
+    # Se nao encontrar, tentar por id do banco
+    if not anime:
+        anime = anime_service.get_anime(anime_id)
     
     if not anime:
         return {'error': 'Anime not found'}, 404

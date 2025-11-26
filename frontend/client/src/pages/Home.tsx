@@ -7,7 +7,7 @@ import { searchAnimes } from "@/api";
 interface Anime {
   mal_id: number;
   title: string;
-  images: { jpg: { image_url: string } };
+  image_url: string;
   score: number;
   episodes: number;
 }
@@ -93,7 +93,7 @@ export default function Home() {
                   key={anime.mal_id}
                   id={anime.mal_id}
                   title={anime.title}
-                  imageUrl={anime.images.jpg.image_url}
+                  imageUrl={anime.image_url || "/placeholder.svg"}
                   score={anime.score || 0}
                   episodes={anime.episodes || 0}
                 />

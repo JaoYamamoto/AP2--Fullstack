@@ -29,7 +29,15 @@ def create_app(config_name=None):
     # Inicializar extensões
     db.init_app(app)
     migrate.init_app(app, db)
-    CORS(app, origins=app.config['CORS_ORIGINS'])
+    
+    # Configurar CORS com mais detalhes
+    cors_origins = app.config['CORS_ORIGINS']
+    CORS(app, 
+         origins=cors_origins,
+         allow_headers=['Content-Type', 'Authorization'],
+         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+         supports_credentials=True,
+         max_age=3600)
     
     # Inicializar Swagger
     swagger = Swagger(app, template={
